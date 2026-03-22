@@ -1,5 +1,7 @@
 # 🦞 OpenClaw Agent Monitor
 
+|Fudan University MAS Lab | Supervised by Prof. Zhenxing Qian | Developed by Jieyu Li and Yuyi Zhang
+
 实时监控OpenClaw Agent活动，追踪会话、工具调用、文件访问，并智能评估安全风险。
 
 ![Python](https://img.shields.io/badge/Python-3.9+-blue)
