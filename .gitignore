@@ -11,9 +11,6 @@ build/
 # Logs
 *.log
 
-# Config (users should copy from example)
-config.json
-
 # Deprecated
 deprecated/
 

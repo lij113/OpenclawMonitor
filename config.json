@@ -1,0 +1,47 @@
+{
+  "server": {
+    "port": 8765,
+    "host": "0.0.0.0",
+    "refresh_interval": 3
+  },
+  "bailian": {
+    "api_key": "",
+    "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    "model": "glm-5"
+  },
+  "alerts": {
+    "max_count": 50,
+    "enable_llm_evaluation": true,
+    "enable_keyword_check": true
+  },
+  "paths": {
+    "openclaw_home": "~/.openclaw",
+    "agents_dir": "~/.openclaw/agents/main",
+    "sessions_json": "~/.openclaw/agents/main/sessions/sessions.json",
+    "cron_file": "~/.openclaw/cron/jobs.json"
+  },
+  "high_risk_keywords": [
+    "rm -rf",
+    "rm -r",
+    "trash",
+    "delete",
+    "rmdir",
+    "apiKey",
+    "password",
+    "secret",
+    "token",
+    "credential",
+    ".env",
+    "openclaw.json",
+    "/etc/",
+    "/System/",
+    "curl -X POST",
+    "curl -d",
+    "wget --post",
+    "病毒",
+    "木马",
+    "后门",
+    "exploit",
+    "malware"
+  ]
+}
