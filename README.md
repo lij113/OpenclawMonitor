@@ -1,7 +1,7 @@
 # 🦞 OpenClaw Agent Monitor
 
 <p align="center">
-  <strong>复旦大学 MAS 实验室 | 钱振兴教授指导 | 李杰雨、张羽仪 开发</strong>
+  <strong>复旦大学 MAS 实验室 | 钱振兴教授 指导 | 李杰雨、张羽仪 开发</strong>
 </p>
 
 实时监控OpenClaw Agent活动，追踪会话、工具调用、文件访问，并智能评估安全风险。
