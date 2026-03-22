@@ -36,7 +36,7 @@ cd openclaw-monitor
 python start.py
 ```
 
-访问http://localhost:8765查看监控面板。
+访问http://localhost:8765 查看监控面板。
 
 ## 界面预览
 
