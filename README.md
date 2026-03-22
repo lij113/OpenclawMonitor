@@ -29,7 +29,7 @@
 
 ```bash
 # 克隆仓库
-git clone https://github.com/yourname/openclaw-monitor.git
+git clone https://github.com/lij113/openclaw-monitor.git
 cd openclaw-monitor
 ```
 
