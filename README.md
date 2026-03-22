@@ -1,6 +1,6 @@
 # 🦞 OpenClaw Agent Monitor
 
-|Fudan University MAS Lab | Supervised by Prof. Zhenxing Qian | Developed by Jieyu Li and Yuyi Zhang
+|复旦大学MAS实验室 | 钱振兴教授指导 | 李杰雨、张羽仪开发
 
 实时监控OpenClaw Agent活动，追踪会话、工具调用、文件访问，并智能评估安全风险。
 
