@@ -1,0 +1,11 @@
+# OpenClaw Agent Monitor Dependencies
+# Python 3.9+ required
+
+# No external dependencies required!
+# All imports are from Python standard library:
+# - json, re, threading, time
+# - urllib.request
+# - collections (Counter, deque)
+# - datetime
+# - http.server
+# - pathlib

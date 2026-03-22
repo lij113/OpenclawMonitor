@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🦞 OpenClaw Agent Monitor</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0e17;color:#e0e6ed;font-family:'SF Mono','Fira Code','Menlo',monospace;font-size:14px}
+/* .header{background:linear-gradient(135deg,#1a1f2e,#0d1117);padding:18px 28px;border-bottom:1px solid #21262d;display:flex;justify-content:space-between;align-items:center} */
+html{scroll-behavior:smooth;}
+.header{
+  background:linear-gradient(135deg,#111827,#020617);
+  padding:14px 28px;
+  border-bottom:1px solid #30363d;
+  display: flex;
+  justify-content:space-between;
+  align-items:center;
+  backdrop-filter: blur(10px);
+}
+.header h1{font-size:22px;font-weight:600;letter-spacing:1px;}
+.header h1 span{color:#ff4500}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px;animation:pulse 2s infinite}
+.dot.on{background:#3fb950;box-shadow:0 0 8px #3fb950}
+.dot.off{background:#f85149}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.meta{color:#8b949e;font-size:12px}
+.metrics{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;padding:16px 28px}
+.metric{text-decoration:none;background:#222933;border:1px solid #21262d;border-radius:10px;padding:14px;text-align:center;cursor:pointer}
+.metric .n{font-size:26px;font-weight:700;color:#ff4500}
+.metric .d{font-size:13px;color:#8b949e;margin-top:3px}
+.metric:active{transform:scale(0.97)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0 28px 14px}
+.metric,.card{transition: all 0.2s ease}
+.metric:hover,.card:hover{transform: translateY(-2px);border-color:rgba(202,70,8,0.3);box-shadow:0 0 12px rgba(255,69,0,0.25);}
+.card{
+  background:linear-gradient(180deg,#222933,#141a22);
+  border:1px solid #21262d;
+  box-shadow:0 4px 16px rgba(0,0,0,0.4);
+  border-radius:10px;padding:16px;max-height:420px;overflow-y:auto;
+  scroll-margin-top:120px
+}
+.card::-webkit-scrollbar{width:4px}
+.card::-webkit-scrollbar-thumb{background:#30363d;border-radius:2px}
+.card h2{font-size:15px;color:#98a1ac;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px}
+.agent{background:#0d1117;border-radius:8px;padding:12px;margin-bottom:8px;border-left:3px solid #21262d}
+.agent.main{border-color:#ff4500}
+.agent.sub{border-color:#3fb950}
+.agent.cron{border-color:#a371f7}
+.agent .name{font-weight:600;color:#f0f6fc;font-size:14px}
+.agent .tag{font-size:10px;padding:1px 6px;border-radius:10px;margin-left:6px}
+.tag.main{background:#ff450020;color:#ff4500}
+.tag.sub{background:#3fb95020;color:#3fb950}
+.tag.cron{background:#a371f720;color:#a371f7}
+.row{display:flex;justify-content:space-between;padding:2px 0;font-size:12px}
+.row .l{color:#6e7681}
+.row .v{color:#c9d1d9}
+.row .v.active{color:#3fb950}
+.row .v.idle{color:#d29922}
+.cron-item{display:flex;justify-content:space-between;align-items:center;padding:10px;background:#0d1117;border-radius:8px;margin-bottom:6px}
+.cron-item .name{font-weight:600;color:#f0f6fc}
+.cron-item .info{color:#8b949e;font-size:11px;margin-top:2px}
+.badge{font-size:10px;padding:2px 8px;border-radius:10px}
+.badge.on{background:#3fb95020;color:#3fb950}
+.badge.off{background:#f8514920;color:#f85149}
+.tool-bar{display:flex;align-items:center;padding:6px 10px;background:#0d1117;border-radius:6px;margin-bottom:4px}
+.tool-bar .name{flex:1;color:#f0f6fc;font-weight:500}
+.tool-bar .count{color:#ff4500;font-weight:700;min-width:30px;text-align:right}
+.tool-bar .bar{flex:2;height:6px;background:#21262d;border-radius:3px;margin:0 10px;overflow:hidden}
+/* .tool-bar .bar .fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#ff4500,#ff6b35)} */
+.tool-bar .bar .fill{
+  height:100%;border-radius:3px;
+  background:linear-gradient(90deg,#ff4500,#ff6b09);
+  box-shadow:0 0 6px rgba(255,69,0,0.5);
+}
+.path-item{padding:4px 8px;background:#0d1117;border-radius:4px;margin-bottom:3px;font-size:12px;color:#c9d1d9;word-break:break-all;border-left:2px solid #8b949e}
+.path-item:hover{color:#f0f6fc}
+.event{padding:6px 10px;border-left:3px solid #21262d;margin-bottom:4px;font-size:11px}
+.event.tool{border-color:#d29922}
+.event .time{color:#6e7681;font-size:11px}
+.event .tool-name{color:#d29922;font-weight:600;font-size:13px}
+.event .args{color:#8b949e;margin-top:1px;font-size:12px}
+.alert-item{padding:8px 12px;background:#f8514915;border:1px solid #f8514940;border-radius:6px;margin-bottom:6px;border-left:3px solid #f85149}
+.alert-item .level{color:#f85149;font-weight:700;font-size:13px}
+.alert-item .detail{color:#c9d1d9;font-size:12px;margin-top:2px}
+.alert-item .reason{color:#d29922;font-size:11px;margin-top:2px;margin-bottom:5px}
+.alert-item .method{color:#6e7681;font-size:12px;float:right}
+.alert-count{background:#f85149;color:#fff;font-size:14px;padding:2px 6px;border-radius:8px;margin-left:6px}
+.no-data{color:#6e7681;text-align:center;padding:20px;font-style:italic}
+footer{text-align:center;padding:12px;color:#6e7681;font-size:10px;border-top:1px solid #21262d}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1><span class="dot on" id="dot"></span>🦞 <span>OpenClaw</span> Monitor</h1>
+  <div class="meta"><span id="lastUp">--</span> · <span id="gwInfo">connecting...</span></div>
+</div>
+
+<div class="metrics">
+  <!-- <div class="metric"><div class="n" id="mSess">-</div><div class="d">会话</div></div>
+  <div class="metric"><div class="n" id="mCron">-</div><div class="d">定时任务</div></div>
+  <div class="metric"><div class="n" id="mTools">-</div><div class="d">工具调用</div></div>
+  <div class="metric"><div class="n" id="mPaths">-</div><div class="d">路径访问</div></div>
+  <div class="metric"><div class="n" id="mMsgs">-</div><div class="d">消息总数</div></div>
+  <div class="metric"><div class="n" id="mAlerts" style="color:#f85149">-</div><div class="d">⚠️ 报警</div></div> -->
+  <a class="metric" href="#card-sess">
+    <div class="n" id="mSess">-</div>
+    <div class="d">💬 会话</div>
+  </a>
+  <a class="metric" href="#card-cron">
+    <div class="n" id="mCron">-</div>
+    <div class="d">⏰ 定时任务</div>
+  </a>
+  <a class="metric" href="#card-tools">
+    <div class="n" id="mTools">-</div>
+    <div class="d">🛠️ 工具调用</div>
+  </a>
+  <a class="metric" href="#card-paths">
+    <div class="n" id="mPaths">-</div>
+    <div class="d">📂 路径访问</div>
+  </a>
+  <a class="metric" href="#card-msgs">
+    <div class="n" id="mMsgs">-</div>
+    <div class="d">✉️ 消息总数</div>
+  </a>
+  <a class="metric" href="#card-alerts">
+    <div class="n" id="mAlerts" style="color:#f85149">-</div>
+    <div class="d">⚠️ 报警</div>
+  </a>
+</div>
+
+<div class="grid">
+  <div class="card" id="card-sess"><h2>🤖 Agent 会话</h2><div id="agents"><div class="no-data">加载中...</div></div></div>
+  <div class="card"><h2>🔧 工具使用统计</h2><div id="toolStats"><div class="no-data">加载中...</div></div></div>
+</div>
+<div class="grid">
+  <div class="card" id="card-paths"><h2>📂 磁盘路径访问 <input id="pathSearch" placeholder="搜索路径..." style="float:right;background:#0d1117;border:1px solid #30363d;color:#e0e6ed;padding:2px 8px;border-radius:4px;font-size:12px;width:170px;height:23px;"></h2><div id="pathList"><div class="no-data">加载中...</div></div></div>
+  <div class="card" id="card-cron"><h2>⏰ 定时任务</h2><div id="cronList"><div class="no-data">加载中...</div></div></div>
+</div>
+<div class="grid" style="grid-template-columns:1fr">
+  <div class="card" id="card-alerts" style="border-color:#f8514940"><h2>🚨 安全报警 <span class="alert-count" id="alertBadge">0</span></h2><div id="alertList"><div class="no-data">暂无报警 ✅</div></div></div>
+</div>
+<div class="grid" style="grid-template-columns:1fr">
+  <div class="card" id="card-tools"><h2>📜 最近工具调用</h2><div id="recentTools"><div class="no-data">加载中...</div></div></div>
+</div>
+
+<footer id="footer">-</footer>
+
+<script>
+function ago(ts){if(!ts)return'--';const d=Date.now()-new Date(ts).getTime();if(d<60000)return Math.floor(d/1000)+'s前';if(d<3600000)return Math.floor(d/60000)+'m前';if(d<86400000)return Math.floor(d/3600000)+'h前';return Math.floor(d/86400000)+'d前'}
+function cut(s,n){return s&&s.length>n?s.substring(0,n)+'…':s||''}
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+
+function renderAgents(ss){
+  const el=document.getElementById('agents');
+  if(!ss||!ss.length){el.innerHTML='<div class="no-data">无会话</div>';return}
+  let h='';
+  ss.forEach(s=>{
+    const k=s.sessionKey||'';
+    const sType=s.sessionType||'';
+    const isMain=sType==='主会话';
+    const cls=isMain?'main':'sub';
+    const label=sType||'子会话';
+    const name=isMain?'Main':(k.split(':').pop()||k);
+    const active=s.updatedAt&&(Date.now()-new Date(s.updatedAt).getTime()<300000);
+    h+=`<div class="agent ${cls}">
+      <div><span class="name">${esc(cut(name,24))}</span><span class="tag ${cls}">${label}</span></div>
+      <div class="row"><span class="l">消息</span><span class="v">${s.messageCount||0}</span></div>
+      <div class="row"><span class="l">工具调用</span><span class="v">${s.toolCallCount||0}</span></div>
+      <div class="row"><span class="l">模型</span><span class="v">${cut(s.model||'--',20)}</span></div>
+      <div class="row"><span class="l">最后活跃</span><span class="v ${active?'active':'idle'}">${ago(s.updatedAt)}</span></div>
+    </div>`;
+  });
+  el.innerHTML=h;
+}
+
+function renderTools(tools){
+  const el=document.getElementById('toolStats');
+  if(!tools||!tools.usage||!tools.usage.length){el.innerHTML='<div class="no-data">无工具调用</div>';return}
+  const max=tools.usage[0].count;
+  let h='';
+  tools.usage.forEach(t=>{
+    const pct=Math.round(t.count/max*100);
+    h+=`<div class="tool-bar">
+      <span class="name">${esc(t.name)}</span>
+      <div class="bar"><div class="fill" style="width:${pct}%"></div></div>
+      <span class="count">${t.count}</span>
+    </div>`;
+  });
+  el.innerHTML=h;
+}
+
+function renderPaths(paths){
+  const el=document.getElementById('pathList');
+  if(!paths||!paths.length){el.innerHTML='<div class="no-data">无路径记录</div>';return}
+  const search=(document.getElementById('pathSearch')?.value||'').toLowerCase();
+  const filtered=search?paths.filter(p=>(p.path||p).toLowerCase().includes(search)):paths;
+  let h='';
+  filtered.forEach(item=>{
+    const p=typeof item==='string'?item:item.path;
+    const ts=item.timestamp?new Date(item.timestamp).toLocaleTimeString('zh-CN'):'--';
+    const color=p.includes('Desktop')?'#58a6ff':p.includes('/tmp')?'#d29922':p.includes('.openclaw')?'#a371f7':'#8b949e';
+    h+=`<div class="path-item" style="border-left:2px solid ${color}"><span>${esc(p)}</span><span style="float:right;color:#6e7681;font-size:10px;margin-left:8px">${ts}</span></div>`
+  });
+  h+=`<div style="color:#6e7681;font-size:11px;padding:4px;text-align:right">${filtered.length}/${paths.length} 条路径</div>`;
+  el.innerHTML=h;
+}
+// 搜索框事件
+document.getElementById('pathSearch')?.addEventListener('input',()=>renderPaths(window._lastPaths||[]));
+
+function renderCron(jobs){
+  const el=document.getElementById('cronList');
+  if(!jobs||!jobs.length){el.innerHTML='<div class="no-data">无定时任务</div>';return}
+  let h='';
+  jobs.forEach(j=>{
+    const on=j.enabled!==false;
+    const next=j.state?.nextRunAtMs?new Date(j.state.nextRunAtMs).toLocaleString('zh-CN'):'--';
+    const last=j.state?.lastRunAtMs?ago(j.state.lastRunAtMs):'从未';
+    h+=`<div class="cron-item"><div>
+      <div class="name">${esc(j.name||j.id||'unnamed')}</div>
+      <div class="info">⏱ ${j.schedule?.expr||j.schedule?.every||'--'} · 下次: ${next} · 上次: ${last}</div>
+    </div><span class="badge ${on?'on':'off'}">${on?'运行中':'停用'}</span></div>`;
+  });
+  el.innerHTML=h;
+}
+
+function renderRecent(tools){
+  const el=document.getElementById('recentTools');
+  const recent=tools?.recent;
+  if(!recent||!recent.length){el.innerHTML='<div class="no-data">无记录</div>';return}
+  let h='';
+  recent.forEach(t=>{
+    h+=`<div class="event tool">
+      <div class="time">${t.timestamp?new Date(t.timestamp).toLocaleTimeString('zh-CN'):'--'}</div>
+      <span class="tool-name">${esc(t.name)}</span>
+      <div class="args">${esc(cut(t.args_summary||'',120))}</div>
+    </div>`;
+  });
+  el.innerHTML=h;
+}
+
+async function refresh(){
+  try{
+    const r=await fetch('/api/state');
+    const d=await r.json();
+    document.getElementById('dot').className='dot on';
+    document.getElementById('lastUp').textContent='更新: '+new Date().toLocaleTimeString('zh-CN');
+    document.getElementById('gwInfo').textContent='Gateway: 127.0.0.1:18789';
+    document.getElementById('mSess').textContent=d.sessions?.length||0;
+    document.getElementById('mCron').textContent=d.cron_jobs?.length||0;
+    document.getElementById('mTools').textContent=d.tools?.total||0;
+    document.getElementById('mPaths').textContent=d.paths?.length||0;
+    document.getElementById('footer').textContent='🦞 OpenClaw Agent Monitor v3 · '+(d.system_info || 'Windows x64')+' · GLM-5风险评估 · 自动刷新 1s';
+    let tm=0;d.sessions?.forEach(s=>{tm+=s.messageCount||0});
+    document.getElementById('mMsgs').textContent=tm;
+    renderAgents(d.sessions);
+    renderTools(d.tools);
+    window._lastPaths=d.paths;
+    renderPaths(d.paths);
+    renderCron(d.cron_jobs);
+    renderRecent(d.tools);
+    // 报警
+    const al=d.alerts||[];
+    document.getElementById('mAlerts').textContent=al.length;
+    document.getElementById('alertBadge').textContent=al.length;
+    const ael=document.getElementById('alertList');
+    if(!al.length){ael.innerHTML='<div class="no-data">暂无报警 ✅</div>'}
+    else{let ah='';al.slice().reverse().forEach(a=>{
+      ah+=`<div class="alert-item">
+        <span class="level">⚠️ 高危</span><span class="method">${esc(a.method||'')}</span>
+        <div class="detail">🔧 ${esc(a.tool||'')} · ${esc(cut(a.args||'',120))}</div>
+        <div class="reason">💡 ${esc(a.reason||'')}</div>
+        <div style="color:#6e7681;font-size:10px;margin-top:2px">${a.timestamp?new Date(a.timestamp).toLocaleString('zh-CN'):'--'}</div>
+      </div>`;
+    });ael.innerHTML=ah}
+  }catch(e){
+    document.getElementById('dot').className='dot off';
+    document.getElementById('gwInfo').textContent='连接失败';
+  }
+}
+refresh();setInterval(refresh,1000);
+</script>
+</body>
+</html>
