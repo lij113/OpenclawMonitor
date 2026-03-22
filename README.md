@@ -36,22 +36,22 @@ cd openclaw-monitor
 python start.py
 ```
 
-访问http://localhost:8765查看监控面板。
+访问http://localhost:8765 查看监控面板。
 
 ## 界面预览
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  🦞 OpenClaw Monitor                    更新: 12:30:45     │
+│  🦞 OpenClaw Monitor                    更新: 12:30:45      │
 ├─────────────────────────────────────────────────────────────┤
-│  会话: 3   定时任务: 2   工具调用: 156   路径: 89          │
+│  会话: 3   定时任务: 2   工具调用: 156   路径: 89             │
 ├─────────────────────────────────────────────────────────────┤
 │  🤖 Agent 会话          │  🔧 工具使用统计                  │
-│  ├─ Main (主会话)       │  ├─ exec        ████████ 45      │
-│  ├─ 论文监控 (cron)     │  ├─ read        ██████   32      │
-│  └─ 天气推送 (cron)     │  └─ web_search  ████     21      │
+│  ├─ Main (主会话)       │  ├─ exec        ████████ 45       │
+│  ├─ 论文监控 (cron)     │  ├─ read        ██████   32       │
+│  └─ 天气推送 (cron)     │  └─ web_search  ████     21       │
 ├─────────────────────────────────────────────────────────────┤
-│  🚨 安全报警                                                 │
+│  🚨 安全报警                                                │
 │  ⚠️ 高危: exec - rm -rf /important/data                     │
 │     原因: 删除文件操作                                       │
 └─────────────────────────────────────────────────────────────┘
@@ -76,20 +76,20 @@ python start.py
 ```json
 {
   "server": {
-    "port": 8765, // 服务器端口
-    "host": "0.0.0.0",  // 服务器地址
-    "refresh_interval": 3  // 刷新间隔，单位秒
+    "port": 8765,
+    "host": "0.0.0.0",
+    "refresh_interval": 3
   },
   "bailian": {
-    "api_key": "your-api-key", // 填写你的百炼API Key
+    "api_key": "your-api-key",
     "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
   },
   "alerts": {
-    "max_count": 50, // 查看最近多少条报警记录
-    "enable_llm_evaluation": true // 是否启用LLM评估
+    "max_count": 50,
+    "enable_llm_evaluation": true
   },
   "paths": {
-    "openclaw_home": "~/.openclaw" // OpenClaw路径
+    "openclaw_home": "~/.openclaw"
   },
 }
 ```
