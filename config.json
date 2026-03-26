@@ -69,6 +69,25 @@
     "system(",
     "os.system",
     "ExecutionPolicy",
-    "chmod 777"
+    "chmod 777",
+    "chmod +x",
+    "unlink",
+    "mv /dev/null",
+    "> /dev/null",
+    "wipe",
+    "shred",
+    "/var/",
+    "/home/",
+    "/root/",
+    "/usr/",
+    "/bin/",
+    "/opt/",
+    "/tmp/",
+    "/Users/",
+    "/Applications/",
+    "/Library/",
+    "launchctl",
+    "osascript",
+    "defaults write"
   ]
 }
