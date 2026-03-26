@@ -1,5 +1,9 @@
 # 🦞 OpenClaw Agent Monitor
 
+<p align="center">
+  <strong>复旦大学 MAS 实验室 | 钱振兴教授 指导 | 李杰雨、张羽仪 开发</strong>
+</p>
+
 实时监控OpenClaw Agent活动，追踪会话、工具调用、文件访问，并智能评估安全风险。
 
 ![Python](https://img.shields.io/badge/Python-3.9+-blue)
@@ -25,7 +29,7 @@
 
 ```bash
 # 克隆仓库
-git clone https://github.com/yourname/openclaw-monitor.git
+git clone https://github.com/lij113/OpenclawMonitor.git
 cd openclaw-monitor
 ```
 
